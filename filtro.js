@@ -8,56 +8,57 @@ const productos = [
   {nombre: "Zapato rojo", tipo: "zapato", color: "rojo", img: "./zapato-rojo.jpg"}
 ]
 
-const li = document.getElementsByName("lista-de-productos")
-const $i = document.querySelector('.input');
+// Obtener el contenedor de productos donde se mostrarán en el HTML
+const li = document.querySelector("#lista-de-productos"); // Aquí se usa el id "lista-de-productos" para acceder al contenedor de productos
+const $i = document.querySelector('.input'); // Seleccionamos el campo de entrada de texto donde el usuario escribe el filtro
+const botonDeFiltro = document.querySelector("button"); // Seleccionamos el botón de filtro
 
-for (let i = 0; i < productos.length; i++) {
-  var d = document.createElement("div")
-  d.classList.add("producto")
+// Función para mostrar los productos en la página
+function mostrarProductos(productos) {
+  li.innerHTML = ''; // Limpiar los productos actuales antes de volver a mostrarlos
+  productos.forEach(producto => {
+    // Creamos un nuevo contenedor para cada producto
+    const d = document.createElement("div");
+    d.classList.add("producto"); // Añadimos una clase para estilos CSS
 
-  var ti = document.createElement("p")
-  ti.classList.add("titulo")
-  ti.textContent = productos[i].nombre
-  
-  var imagen = document.createElement("img");
-  imagen.setAttribute('src', productos[i].img);
+    // Creamos un párrafo para el nombre del producto
+    const ti = document.createElement("p");
+    ti.classList.add("titulo"); // Añadimos clase para estilizar el nombre
+    ti.textContent = producto.nombre; // Asignamos el nombre del producto
 
-  d.appendChild(ti)
-  d.appendChild(imagen)
+    // Creamos una imagen para el producto
+    const imagen = document.createElement("img");
+    imagen.setAttribute('src', producto.img); // Establecemos la imagen del producto
 
-  li.appendChild(d)
+    // Añadimos los elementos al contenedor del producto
+    d.appendChild(ti);
+    d.appendChild(imagen);
+
+    // Finalmente, añadimos el producto al contenedor principal
+    li.appendChild(d);
+  });
 }
+// Mostrar todos los productos al inicio
+mostrarProductos(productos);
 
-displayProductos(productos)
-const botonDeFiltro = document.querySelector("button");
+// Función de filtrado que se ejecuta cuando se aplica el filtro
+const filtrado = (productos, texto) => {
+  return productos.filter(item => 
+    // Comprobamos si el tipo o el color del producto coinciden con el texto de búsqueda
+    item.tipo.toLowerCase().includes(texto.toLowerCase()) || 
+    item.color.toLowerCase().includes(texto.toLowerCase())
+  );
+};
 
+// Evento al hacer clic en el botón de filtro
 botonDeFiltro.onclick = function() {
-  while (li.firstChild) {
-    li.removeChild(li.firstChild);
-  }
+  const texto = $i.value.trim(); // Obtenemos el texto ingresado en el campo de búsqueda y lo recortamos (eliminamos espacios al principio y al final)
+  console.log("Filtro aplicado:", texto);
 
-  const texto = $i.value;
-  console.log(texto);
-  const productosFiltrados = filtrado(productos, texto );
+  // Si el campo de texto está vacío, mostramos todos los productos
+  // Si no, filtramos los productos según el texto ingresado
+  const productosFiltrados = texto ? filtrado(productos, texto) : productos;
 
-  for (let i = 0; i < productosFiltrados.length; i++) {
-    var d = document.createElement("div")
-    d.classList.add("producto")
-  
-    var ti = document.createElement("p")
-    ti.classList.add("titulo")
-    ti.textContent = productosFiltrados[i].nombre
-    
-    var imagen = document.createElement("img");
-    imagen.setAttribute('src', productosFiltrados[i].img);
-  
-    d.appendChild(ti)
-    d.appendChild(imagen)
-  
-    li.appendChild(d)
-  }
-}
-
-const filtrado = (productos = [], texto) => {
-  return productos.filter(item => item.tipo.includes(texto) || item.color.includes(texto));
-}  
+  // Llamamos a la función mostrarProductos para actualizar la lista mostrada con los productos filtrados
+  mostrarProductos(productosFiltrados);
+};
